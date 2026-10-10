@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wireframe.code</title>
+  <link rel="stylesheet" href="/styles.css">
+
+</head>
+
+<body>
+  <div id="app">
+    <div id="ed">
+      <div class="tb"><b>📐 Wireframe.code</b><button id="demo">Contoh</button></div>
+      <div id="code">
+        <div id="gut">
+          <pre id="nums">1</pre>
+        </div>
+        <div id="field">
+          <pre id="guides" aria-hidden="true"></pre><textarea id="src" spellcheck="false" wrap="off"></textarea>
+        </div>
+      </div>
+      <details>
+        <summary>Komponen (klik = sisipkan baris)</summary>
+        <div id="chips"></div>
+      </details>
+    </div>
+    <div id="split" role="separator" aria-orientation="vertical" title="Drag to resize (double-click to reset)"></div>
+    <div id="pv"></div>
+  </div>
+
+  <script src="/scripts.js" defer></script>
+</body>
+
+</html>

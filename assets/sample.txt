@@ -1,0 +1,716 @@
+# SUPPORT TICKET SYSTEM: admin + super admin
+# Paste into Wireframe.code (replace the editor content).
+# Workspace admin: 1 Canned responses | 2 Automations | 3 Channels
+# Super admin (whole platform): 4 Overview | 5 Workspace detail | 6 Audit log
+
+screen "1. Admin: Canned responses" desktop
+  header "SupportDesk" "Dashboard|Inbox|Board|Reports|Settings"
+  row
+    sidebar "Settings" "General|Team and roles|Workflow|Canned responses|Automations|Channels" active=4 w=170
+    col flex=1
+      row
+        heading "Canned responses" h1
+        button "+ New response" primary
+      row
+        search "Search responses"
+        chip "Folder: All"
+        chip "Shared"
+      row
+        card "Responses" flex=1
+          list
+            item "Password reset steps" "Account · Shared · used 124x"
+            item "Refund policy" "Billing · Shared · used 67x"
+            item "Request for logs" "Technical · Personal"
+            item "Closing: no reply" "General · Shared"
+          pagination pages=3 active=1
+        card "Edit response" flex=2
+          input "Title" value="Password reset steps"
+          row
+            select "Folder" value="Account"
+            select "Visibility" value="Shared with all agents"
+          input "Shortcut" value="/reset"
+          textarea "Message" value="Hi {{customer.first_name}}, here is how to reset your password. Step 1 ..." rows=5
+          text "Insert placeholder:"
+          row
+            chip "{{customer.name}}"
+            chip "{{ticket.id}}"
+            chip "{{agent.name}}"
+          row
+            link "Delete response"
+            text ""
+            button "Cancel"
+            button "Save" primary
+
+screen "2. Admin: Automations" desktop
+  header "SupportDesk" "Dashboard|Inbox|Board|Reports|Settings"
+  row
+    sidebar "Settings" "General|Team and roles|Workflow|Canned responses|Automations|Channels" active=5 w=170
+    col flex=1
+      row
+        heading "Automations" h1
+        button "+ New rule" primary
+      tabs "Rules|Run history" active=1
+        table "Rule|Trigger|Last run|Status"
+          tr "Auto-assign billing tickets|Ticket created|2 min ago|On"
+          tr "Close solved tickets after 3 days|Every day 02:00|Today|On"
+          tr "Notify team on urgent priority|Ticket updated|1h ago|Off"
+      card "Rule builder: Auto-assign billing tickets"
+        input "Rule name" value="Auto-assign billing tickets"
+        heading "WHEN" h3
+        select "Event" value="Ticket is created"
+        heading "IF all conditions match" h3
+        row
+          select "Field" value="Category"
+          select "Operator" value="is"
+          select "Value" value="Billing"
+          iconbtn "✕"
+        row
+          select "Field" value="Channel"
+          select "Operator" value="is"
+          select "Value" value="Email"
+          iconbtn "✕"
+        link "+ Add condition"
+        heading "THEN do" h3
+        row
+          select "Action" value="Assign to team"
+          select "Team" value="Billing team"
+          iconbtn "✕"
+        row
+          select "Action" value="Add label"
+          input "Label" value="billing"
+          iconbtn "✕"
+        link "+ Add action"
+        toggle "Rule enabled" on
+        row
+          button "Cancel"
+          button "Test on sample ticket"
+          button "Save rule" primary
+
+screen "3. Admin: Channels" desktop
+  header "SupportDesk" "Dashboard|Inbox|Board|Reports|Settings"
+  row
+    sidebar "Settings" "General|Team and roles|Workflow|Canned responses|Automations|Channels" active=6 w=170
+    col flex=1
+      row
+        heading "Channels" h1
+        button "+ Add channel" primary
+      row
+        card
+          row
+            heading "Email" h3
+            badge "Connected"
+          text "support@acme.com"
+          link "Configure"
+        card
+          row
+            heading "Web form" h3
+            badge "Active"
+          text "Embedded on acme.com/help"
+          link "Get embed code"
+        card
+          row
+            heading "Live chat" h3
+            badge "Off"
+          toggle "Enable"
+        card
+          row
+            heading "API" h3
+            badge "Active"
+          text "2 API keys"
+          link "Manage keys"
+      card "Configure email channel"
+        input "Support address" value="support@acme.com"
+        input "Forward emails to" value="support@acme.tickets.io"
+        row
+          select "Default team" value="General support"
+          select "Default priority" value="Medium"
+        toggle "Send auto-reply to new tickets" on
+        textarea "Auto-reply message" value="Thanks for contacting us. Your ticket number is {{ticket.id}}." rows=3
+        row
+          button "Send test email"
+          button "Save" primary
+      card "Connection log"
+        table "Time|Event|Result"
+          tr "10:42|Inbound email received|OK"
+          tr "10:30|Inbound email received|OK"
+          tr "09:12|Outbound reply sent|Failed: mailbox full"
+
+screen "4. Super admin: Overview" desktop
+  header "SupportDesk · Super Admin" "Workspaces|Plans|Audit log|System"
+  row
+    sidebar "Platform" "Overview|Workspaces|Users|Plans and billing|Audit log|System health|Feature flags" active=2 w=170
+    col flex=1
+      alert "Maintenance window: Saturday 02:00-03:00 UTC" info
+      row
+        card "Workspaces"
+          heading "24" h1
+          text "3 new this month"
+        card "Active agents"
+          heading "186" h1
+          text "of 240 seats"
+        card "Tickets today"
+          heading "1,204" h1
+          text "+8% vs last week"
+        card "Incidents"
+          heading "0" h1
+          badge "All systems normal"
+      row
+        heading "Workspaces" h2
+        button "+ New workspace" primary
+      row
+        search "Search workspace or owner"
+        chip "Plan: All"
+        chip "Status: Active"
+      table "Workspace|Plan|Agents|Tickets 30d|Status"
+        tr "Acme Ltd|Business|24|3,410|Active"
+        tr "Globex|Starter|5|612|Active"
+        tr "Initech|Business|31|4,087|Past due"
+        tr "Umbrella|Trial|3|45|Trial ends in 4d"
+      pagination pages=3 active=1
+
+screen "5. Super admin: Workspace detail" desktop
+  header "SupportDesk · Super Admin" "Workspaces|Plans|Audit log|System"
+  breadcrumb "Workspaces|Initech"
+  row
+    heading "Initech" h1
+    badge "Past due"
+    button "Login as owner"
+    button "Suspend"
+  alert "Impersonation is logged and the owner is notified." warning
+  tabs "Overview|Users|Plan and billing|Danger zone" active=1
+    row
+      card "Details"
+        text "Owner: Peter G. <peter@initech.com>"
+        text "Created: 12 Jan 2025"
+        text "Region: EU"
+        text "Custom domain: help.initech.com"
+      card "Usage"
+        text "Agent seats: 31 of 30"
+        progress value=100
+        text "Storage: 6.2 GB of 20 GB"
+        progress value=31
+    card "Recent activity"
+      table "Time|Actor|Action"
+        tr "Today 09:12|Peter G.|Added 1 agent"
+        tr "Yesterday|System|Invoice INV-2041 failed"
+  modal "Delete workspace Initech?"
+    alert "This permanently deletes all tickets and cannot be undone." error
+    input "Type the workspace name to confirm" placeholder="Initech"
+    row
+      button "Cancel"
+      button "Delete workspace" primary
+
+screen "6. Super admin: Audit log" desktop
+  header "SupportDesk · Super Admin" "Workspaces|Plans|Audit log|System"
+  row
+    sidebar "Platform" "Overview|Workspaces|Users|Plans and billing|Audit log|System health|Feature flags" active=5 w=170
+    col flex=1
+      row
+        heading "Audit log" h1
+        button "Export CSV"
+      row
+        search "Search actor, action or target"
+        chip "Workspace: All"
+        chip "Action type"
+        chip "Last 7 days"
+      table "Time|Actor|Action|Target|IP"
+        tr "10:42|root@platform|Impersonated owner|Initech|10.0.4.2"
+        tr "10:15|jane@platform|Changed plan|Globex|10.0.4.9"
+        tr "09:50|root@platform|Toggled feature flag|new_inbox|10.0.4.2"
+        tr "09:12|peter@initech|Added agent|Initech|82.14.9.3"
+      pagination pages=12 active=1
+
+# SUPPORT TICKET SYSTEM: overall design
+# Paste into Wireframe.code (replace the editor content).
+# Already built separately: ticket detail + comments, kanban board.
+# Here: 1 Dashboard | 2 Inbox | 3 Portal home | 4 Submit ticket | 5 Customer ticket view
+# Admin screens (canned responses, automations, channels, super admin) are in support-ticket-admin.txt
+
+screen "1. Agent dashboard" desktop
+  header "SupportDesk" "Dashboard|Inbox|Board|Reports|Settings"
+  row
+    heading "Good morning, Elsa" h1
+    button "Create ticket" primary
+  row
+    card "Open tickets"
+      heading "48" h1
+      text "+5 since yesterday"
+    card "Unassigned"
+      heading "7" h1
+      text "Oldest: 3h"
+    card "Waiting on customer"
+      heading "9" h1
+      text "Oldest: 2d"
+    card "CSAT (7 days)"
+      heading "92%" h1
+      progress value=92
+  row
+    card "Tickets created vs resolved"
+      image "Line chart" h=150
+    card "Open by status"
+      image "Donut chart" h=150
+  card "My queue"
+    table "ID|Subject|Customer|Priority|Status|Updated"
+      tr "SUP-231|Export to CSV fails|Acme Ltd|High|Open|10m ago"
+      tr "SUP-242|Cannot reset password|Bob Morane|High|Open|1h ago"
+      tr "SUP-238|Login loop on Safari|Dana K.|Medium|Open|3h ago"
+    link "Open full inbox"
+
+screen "2. Inbox (ticket list)" desktop
+  header "SupportDesk" "Dashboard|Inbox|Board|Reports|Settings"
+  row
+    sidebar "Views" "My open|Unassigned|Waiting on customer|Resolved today|All tickets" active=1 w=170
+    col flex=1
+      row
+        heading "My open tickets" h1
+        badge "12"
+        button "Create ticket" primary
+      row
+        search "Search by ID, subject, customer"
+        chip "Status: Open"
+        chip "Priority"
+        chip "Channel"
+        link "Save view"
+      row
+        checkbox "Select all"
+        button "Assign"
+        button "Change status"
+        button "Merge"
+        text ""
+        chip "Sort: Updated"
+      table "☐|ID|Subject|Customer|Priority|Status|Updated|Owner"
+        tr "☐|SUP-231|Export to CSV fails|Acme Ltd|High|Open|10m ago|JT"
+        tr "☐|SUP-242|Cannot reset password|Bob Morane|High|Open|1h ago|EH"
+        tr "☐|SUP-238|Login loop on Safari|Dana K.|Medium|Open|3h ago|EH"
+        tr "☐|SUP-219|Need log files|Acme Ltd|Medium|Waiting|2d ago|AK"
+      pagination pages=8 active=1
+
+screen "3. Customer portal: home" desktop
+  header "Acme Support" "Help center|My tickets|Sign in"
+  heading "How can we help?" h1
+  search "Describe your problem…"
+  row
+    chip "Account"
+    chip "Billing"
+    chip "Mobile app"
+    chip "Integrations"
+  row
+    card "Popular articles"
+      list
+        item "How to reset your password" "Account"
+        item "Update billing details" "Billing"
+        item "Connect webhooks" "Integrations"
+    card "Still need help?"
+      text "Our team will reply to you by email."
+      button "Submit a ticket" primary
+      link "Check ticket status"
+  footer "© 2026 Acme" "Privacy|Terms|System status"
+
+screen "4. Customer: submit ticket" tablet
+  header "Acme Support" "Help center|My tickets"
+  breadcrumb "Help center|Submit a ticket"
+  heading "Submit a ticket" h1
+  select "What do you need help with?" value="Account and login"
+  input "Subject" placeholder="Short summary of the problem"
+  textarea "Describe the problem" placeholder="What happened? What did you expect?" rows=5
+  card "These articles may help"
+    list
+      item "How to reset your password" "Account"
+      item "Troubleshooting login errors" "Account"
+  row
+    button "📎 Attach files"
+    text "Max 10 MB per file"
+  input "Email" value="bob@mail.com"
+  button "Submit ticket" primary
+  toast "Ticket SUP-250 created. We emailed you a copy."
+
+screen "5. Customer: my ticket (mobile)" mobile
+  header "SUP-242" menu
+  heading "Cannot reset password" h2
+  row
+    badge "In progress"
+    text "Updated 1h ago"
+  card "Conversation"
+    row
+      avatar "ME" size=32
+      col
+        heading "You" h3
+        text "I tapped the link and got a white screen."
+    row
+      avatar "EH" size=32
+      col
+        row
+          heading "Elsa" h3
+          badge "Support"
+        text "Thanks! Which browser are you using?"
+  textarea placeholder="Write a reply…" rows=3
+  button "Send reply" primary wide
+  button "Mark as solved" wide
+  bottomnav "Help|My tickets|Account" active=2
+
+
+# SUPPORT TICKET SYSTEM: kanban board
+# Paste into Wireframe.code (replace the editor content).
+# Screens: 1) board (desktop)  2) board (mobile)  3) board states & overlays
+# Tip: keep ticket cards to 2 short rows (ID + avatar, then badges), because columns are narrow.
+# `text ""` is a flexible spacer that pushes the avatar to the right.
+
+screen "1. Support board, desktop" desktop
+  header "SupportDesk" "Tickets|Board|Reports|Settings"
+  breadcrumb "Projects|Support|Board"
+  row
+    sidebar "Support" "Board|Backlog|Timeline|Reports|Settings" active=1 w=150
+    col flex=1
+      row
+        heading "Support Board" h1
+        avatar "EH" size=32
+        avatar "JT" size=32
+        avatar "AK" size=32
+        badge "+4"
+        button "Create ticket" primary
+      row
+        search "Search tickets"
+        chip "Assignee: All"
+        chip "Priority"
+        chip "Label"
+        link "Clear filters"
+      row
+        card "NEW · 3"
+          card
+            text "Cannot reset password on mobile"
+            row
+              badge "SUP-242"
+              text ""
+              avatar "EH" size=28
+            row
+              badge "▲ High"
+          card
+            text "Invoice shows wrong tax"
+            row
+              badge "SUP-245"
+              text ""
+              avatar "" size=28
+            row
+              badge "= Medium"
+          card
+            text "Feature request: dark mode"
+            row
+              badge "SUP-246"
+              text ""
+              avatar "" size=28
+            row
+              badge "▼ Low"
+              chip "feature"
+          button "+ Create ticket"
+        card "OPEN · 4/5"
+          card
+            text "Export to CSV fails"
+            row
+              badge "SUP-231"
+              text ""
+              avatar "JT" size=28
+            row
+              badge "▲ High"
+          card
+            text "Login loop on Safari"
+            row
+              badge "SUP-238"
+              text ""
+              avatar "EH" size=28
+            row
+              badge "= Medium"
+          card
+            text "Webhook not firing"
+            row
+              badge "SUP-240"
+              text ""
+              avatar "AK" size=28
+            row
+              badge "▲ High"
+          card
+            text "Slow dashboard loading"
+            row
+              badge "SUP-241"
+              text ""
+              avatar "JT" size=28
+            row
+              badge "▼ Low"
+        card "WAITING · 2"
+          card
+            text "Need log files from client"
+            row
+              badge "SUP-219"
+              text "3d"
+              avatar "AK" size=28
+            row
+              badge "= Medium"
+          card
+            text "Confirm account ownership"
+            row
+              badge "SUP-224"
+              text "1d"
+              avatar "EH" size=28
+            row
+              badge "▲ High"
+        card "RESOLVED · 2"
+          card
+            text "Duplicate email notifications"
+            row
+              badge "SUP-205"
+              text ""
+              avatar "JT" size=28
+            row
+              badge "✓ Done"
+          card
+            text "Update billing address"
+            row
+              badge "SUP-208"
+              text ""
+              avatar "EH" size=28
+            row
+              badge "✓ Done"
+
+screen "2. Board, mobile" mobile
+  header "Support Board" menu
+  search "Search tickets"
+  row
+    chip "Mine"
+    chip "High priority"
+  tabs "New|Open|Waiting|Resolved" active=2
+    card
+      text "Export to CSV fails"
+      row
+        badge "SUP-231"
+        text ""
+        avatar "JT" size=28
+      row
+        badge "▲ High"
+    card
+      text "Login loop on Safari"
+      row
+        badge "SUP-238"
+        text ""
+        avatar "EH" size=28
+      row
+        badge "= Medium"
+    card
+      text "Webhook not firing"
+      row
+        badge "SUP-240"
+        text ""
+        avatar "AK" size=28
+      row
+        badge "▲ High"
+  fab "+"
+  bottomnav "Board|Inbox|Profile" active=1
+
+screen "3. Board states and overlays" tablet
+  card "WIP limit exceeded"
+    alert "OPEN has 6 tickets, limit is 5" warning
+    row
+      badge "OPEN · 6/5"
+      link "Edit limit"
+  card "Empty column"
+    image "Illustration" h=60
+    text "No tickets here. Drag one over or create a new ticket."
+    button "+ Create ticket"
+  card "Quick create (inline)"
+    input placeholder="What needs to be done?"
+    row
+      select "Priority" value="Medium"
+      select "Assignee" value="Unassigned"
+    row
+      button "Create" primary
+      button "Cancel"
+  card "Card being dragged"
+    alert "Drop on a column to change status" info
+    progress value=60
+  card "Loading board"
+    row
+      skeleton lines=3
+      skeleton lines=2
+      skeleton lines=4
+  card "Error"
+    alert "Could not move SUP-231. Reverted." error
+    button "Retry"
+  modal "SUP-231: Export to CSV fails"
+    row
+      badge "Open"
+      badge "▲ High"
+      text ""
+      avatar "JT" size=28
+    lorem lines=2
+    row
+      select "Move to" value="Waiting on customer"
+      select "Assignee" value="Jin Tanaka"
+    row
+      link "Open full ticket"
+      button "Close"
+  toast "SUP-231 moved to Waiting on customer"
+
+
+# SUPPORT TICKET SYSTEM: ticket detail + comment section
+# Paste into Wireframe.code (replace the editor content).
+# Screens: 1) agent view (desktop)  2) comments (mobile)  3) comment states
+
+screen "1. Ticket detail, agent view" desktop
+  header "SupportDesk" "Tickets|Customers|Reports|Settings"
+  breadcrumb "Tickets|Open|SUP-242"
+  row
+    col flex=2
+      row
+        heading "Cannot reset password on mobile app" h1
+        badge "In progress"
+      row
+        iconbtn "📎"
+        iconbtn "🔗"
+        iconbtn "⋯"
+      card "Description"
+        text "Customer reports the reset link opens a blank page on Android 14."
+        lorem lines=2
+      row
+        image "screenshot.png" w=180 h=100
+        image "error-log.txt" w=180 h=100
+      divider
+      row
+        heading "Activity" h2
+        chip "Newest first"
+      tabs "All|Comments|History" active=2
+        # ---- Composer ----
+        row
+          avatar "ME"
+          col
+            tabs "Reply to customer|Internal note" active=1
+              text "To: Bob Morane <bob@mail.com>"
+              textarea placeholder="Write a reply…" rows=4
+              row
+                iconbtn "B"
+                iconbtn "I"
+                iconbtn "🔗"
+                iconbtn "📎"
+                iconbtn "😊"
+              select "Canned response" value="Choose…"
+              row
+                checkbox "Close ticket after sending"
+                button "Cancel"
+                button "Send reply" primary
+        divider
+        # ---- Comment: customer, with attachment ----
+        row
+          avatar "BM"
+          col
+            row
+              heading "Bob Morane" h3 w=120
+              badge "Customer"
+              text "Yesterday, 4:12 PM"
+            text "I tapped the link in the email and just get a white screen. Screenshot attached."
+            row
+              image "screenshot.png" w=160 h=90
+            row
+              link "Reply"
+              link "Quote"
+        # ---- Comment: agent reply ----
+        row
+          avatar "EH"
+          col
+            row
+              heading "Elsa Hugo" h3 w=120
+              badge "Agent"
+              text "Today, 9:05 AM"
+            text "Hi Bob, thanks for the details. Could you tell me which browser opens the link?"
+            row
+              link "Reply"
+              link "Edit"
+              link "Delete"
+        # ---- Comment: internal note ----
+        row
+          avatar "JT"
+          col
+            row
+              heading "Jin Tanaka" h3 w=120
+              badge "Internal note"
+              text "Today, 9:40 AM"
+            alert "Only visible to agents" warning
+            text "Reproduced on Android 14. Deep link config looks wrong, escalating to dev."
+            row
+              link "Reply"
+              link "Edit"
+              link "Delete"
+        # ---- System event ----
+        text "Elsa Hugo changed status: To Do → In progress · 3 hours ago"
+        link "Load older comments (12)"
+    col flex=1
+      select "Status" value="In progress"
+      card "Details"
+        select "Assignee" value="Elsa Hugo"
+        select "Priority" value="Medium"
+        text "Reporter: Bob Morane"
+        row
+          chip "login"
+          chip "mobile"
+      card "Requester"
+        row
+          avatar "BM"
+          col
+            heading "Bob Morane" h3
+            text "bob@mail.com"
+        link "View 4 previous tickets"
+      accordion "Related tickets" open
+        list
+          item "SUP-198" "Password reset email delayed"
+          item "SUP-176" "Blank page after login"
+
+screen "2. Comments, mobile" mobile
+  header "SUP-242" menu
+  heading "Cannot reset password" h2
+  tabs "All|Comments|History" active=2
+    input placeholder="Add a comment…"
+    row
+      avatar "BM"
+      col
+        row
+          heading "Bob Morane" h3
+          text "Yesterday"
+        text "I tapped the link and just get a white screen."
+        link "Reply"
+    row
+      avatar "EH"
+      col
+        row
+          heading "Elsa Hugo" h3
+          badge "Agent"
+        text "Which browser opens the link?"
+        link "Reply"
+    link "Load older comments"
+  fab "✎"
+  bottomnav "Tickets|Inbox|Profile" active=1
+
+screen "3. Comment states" tablet
+  card "Loading"
+    row
+      avatar ""
+      skeleton lines=3
+  card "Empty"
+    image "Illustration" h=70
+    text "No comments yet. Start the conversation."
+    button "Write first reply" primary
+  card "Error"
+    alert "Could not load comments." error
+    button "Retry"
+  card "Sending"
+    row
+      spinner
+      text "Sending reply…"
+    progress value=40
+  card "Edit mode"
+    textarea value="Hi Bob, which browser opens the link?" rows=2
+    row
+      button "Save" primary
+      button "Cancel"
+    text "Edited · 2 minutes ago"
+  modal "Delete comment?"
+    text "This cannot be undone."
+    row
+      button "Cancel"
+      button "Delete" primary
+  toast "Reply sent"
