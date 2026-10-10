@@ -745,6 +745,7 @@ const indentGuides = document.getElementById('guides');  // <pre> layer behind t
 const editorPane = document.getElementById('ed');        // left (or top) pane
 const appLayout = document.getElementById('app');        // grid holding editor | splitter | preview
 const splitter = document.getElementById('split');       // draggable divider
+const themeToggleButton = document.getElementById('theme'); // light/dark switch
 
 /** Save the editor text; localStorage may be unavailable, so never throw. */
 function saveSource() {
@@ -966,8 +967,46 @@ function handleSplitterPointerDown(event) {
     splitter.addEventListener('pointercancel', finishDrag);
 }
 
+/* ---- Theme (light / dark) -------------------------------------------------- */
+
+const THEME_STORAGE_KEY = 'wf-theme';
+
+/**
+ * Saved choice if there is one, otherwise the operating system preference.
+ * @returns {'light'|'dark'}
+ */
+function getPreferredTheme() {
+    try {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (saved === 'light' || saved === 'dark') return saved;
+    } catch (error) { /* storage unavailable: fall through */ }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+/**
+ * Switch the whole UI by setting <html data-theme="...">; the CSS tokens do the
+ * rest. The button shows the theme you would switch TO.
+ * @param {'light'|'dark'} theme
+ */
+function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    const target = theme === 'dark' ? 'light' : 'dark';
+    themeToggleButton.textContent = theme === 'dark' ? '☀️' : '🌙';
+    themeToggleButton.title = `Switch to ${target} mode`;
+    themeToggleButton.setAttribute('aria-label', themeToggleButton.title);
+}
+
+/** Flip the theme and remember the choice. */
+function toggleTheme() {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch (error) { /* ignore */ }
+}
+
 /** Wire events, load the saved (or sample) document, and draw it. */
 function initEditor() {
+    applyTheme(getPreferredTheme());
+    themeToggleButton.addEventListener('click', toggleTheme);
     sourceEditor.addEventListener('input', redrawPreview);
     sourceEditor.addEventListener('keydown', handleEditorKeydown);
     loadSampleButton.onclick = () => {

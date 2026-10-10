@@ -1,18 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Wireframe.code</title>
+  <title>wireframe.code</title>
   <link rel="stylesheet" href="/styles.css">
-
+  <script>try{var t=localstorage.getitem('wf-theme');document.documentelement.dataset.theme=(t==='light'||t==='dark')?t:(matchmedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
 </head>
-
 <body>
   <div id="app">
     <div id="ed">
-      <div class="tb"><b>📐 Wireframe.code</b><button id="demo">Contoh</button></div>
+      <div class="tb"><b>📐 wireframe.code</b><button id="theme">🌙</button><button id="demo">contoh</button></div>
       <div id="code">
         <div id="gut">
           <pre id="nums">1</pre>
@@ -22,15 +20,13 @@
         </div>
       </div>
       <details>
-        <summary>Komponen (klik = sisipkan baris)</summary>
+        <summary>komponen (klik = sisipkan baris)</summary>
         <div id="chips"></div>
       </details>
     </div>
-    <div id="split" role="separator" aria-orientation="vertical" title="Drag to resize (double-click to reset)"></div>
+    <div id="split" role="separator" aria-orientation="vertical" title="drag to resize (double-click to reset)"></div>
     <div id="pv"></div>
   </div>
-
   <script src="/scripts.js" defer></script>
 </body>
-
 </html>
